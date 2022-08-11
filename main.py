@@ -15,21 +15,22 @@ def parse_page(number):
 		price = parse_price(offer.find('p', class_='css-wpfvmn-Text eu5v0x0').get_text())
 		location = offer.find('p', class_='css-p6wsjo-Text eu5v0x0').get_text().strip().split('-')[0]
 		time_added = offer.find('p', class_='css-p6wsjo-Text eu5v0x0').get_text().strip().split('-')[1]
+		year = offer.find('p', class_='css-1obsecn').get_text()
 		link = offer.find('a')
-		cursor.execute('INSERT INTO offers VALUES(?,?,?,?,?)', (name, price, location, time_added,link['href']))
+		cursor.execute('INSERT INTO offers VALUES(?,?,?,?,?,?)', (name, price,year, location, time_added,link['href']))
 
 		db.commit()
 
-URL = 'https://www.olx.pl/d/motoryzacja/samochody/landrover/suwalki/?search%5Bdist%5D=100&search%5Bfilter_enum_country_origin%5D%5B0%5D=pl'
-db = sqlite3.connect('proba.db')
+URL = 'https://www.olx.pl/d/motoryzacja/samochody/suwalki/?search%5Bdist%5D=100&search%5Bfilter_float_price:from%5D=10000&search%5Bfilter_float_price:to%5D=50000&search%5Bfilter_enum_petrol%5D%5B0%5D=petrol&search%5Bfilter_float_milage:to%5D=150000&search%5Bfilter_enum_country_origin%5D%5B0%5D=pl'
+db = sqlite3.connect('auta.db')
 cursor = db.cursor()
 
 if len(argv) > 1 and argv[1] == 'setup':
-	cursor.execute('''CREATE TABLE offers (name TEXT, price REAL, city TEXT, date TEXT,URL TEXT )''')
+	cursor.execute('''CREATE TABLE offers (name TEXT, price REAL,year TEXT, city TEXT, date TEXT,URL TEXT )''')
 	quit()
 #python main.py setup
 
-for page in range(1):
+for page in range(10):
 	parse_page(page)
 
 db.close()
